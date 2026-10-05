@@ -1,17 +1,8 @@
-import test, { expect, Page } from "@playwright/test";
+import test, { expect, Locator, Page } from "@playwright/test";
 
-enum acceptedUsernames {
-    standard = "standard_user",
-    lockedOut = "locked_out_user",
-    problem = "problem_user",
-    perfGlitch = "performace_glitch_user",
-    error = "error_user",
-    visual = "visual_user"
-}
-
-const acceptedConnection = async (
+const userConnect = async (
     page: Page,
-    user: acceptedUsernames = acceptedUsernames.standard,
+    user: string = "standard_user",
 ) => {
     const username: string = user
 
@@ -26,12 +17,27 @@ test.beforeEach(async ({ page }) => {
 
 test.describe("Login with accepted users - positive tests", () => {
     test("login avec 'standard_user'", async ({ page }) => {
-        await acceptedConnection(page)
+        await userConnect(page)
 
         await expect(page.getByText(/Products/)).toBeVisible()
     })
 })
 
-test.describe("Login with accpeted users - negative tests", () => {
+test.describe("Login with accepted users - negative tests", () => {
+    test("login avec 'locked_out_user'", async ({ page }) => {
+        await userConnect(page, "locked_out_user")
 
+        await expect(page.getByText(/locked out/)).toBeVisible()
+
+    });
+
+    test("login avec 'problem_user'", async ({ page }) => {
+        await userConnect(page, "problem_user")
+
+        const images = await page.getByRole("main").getByRole("img").all()
+
+        for (let img of images) {
+            await expect(img).toHaveAttribute("src", "/assets/sl-404-Cq1a9k9X.jpg")
+        }
+    })
 })
