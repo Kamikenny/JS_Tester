@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
     await userConnect(page)
 })
 
-test('test', async ({ page }) => {
+test('complete checkout route', async ({ page }) => {
 
     const badges = page.getByTestId("inventory-item")
     const articles = await badges.filter({ hasText: /backpack|bike/i }).all()
@@ -44,3 +44,4 @@ test('test', async ({ page }) => {
 
     await expect(page.getByText("Thank you for your order!"))
 });
+
